@@ -138,7 +138,7 @@ export const App = () => {
           facingMode: isBackFacing ? "environment" : "user",
           width: window.innerWidth * window.devicePixelRatio,
           height: window.innerHeight * window.devicePixelRatio,
-          // deviceId: backCamera ? { exact: backCamera?.deviceId } : undefined,
+          deviceId: backCamera ? { exact: backCamera?.deviceId } : undefined,
         },
       });
 
@@ -166,6 +166,8 @@ export const App = () => {
   return (
     <div style={{ height: "100%", width: "100%" }}>
       <canvas
+        width={window.innerWidth * window.devicePixelRatio}
+        height={window.innerHeight * window.devicePixelRatio}
         ref={canvasRef}
         style={{ height: "100%", width: "100%" }}
       />
