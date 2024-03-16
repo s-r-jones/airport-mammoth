@@ -15,12 +15,14 @@ import { Push2Web } from "@snap/push2web";
 import "./App.css";
 
 function requestDeviceMotionPermission() {
+  console.log("requestDeviceMotionPermission");
   //@ts-ignore
   if (typeof DeviceMotionEvent.requestPermission === "function") {
     //@ts-ignore
     DeviceMotionEvent.requestPermission()
       //@ts-ignore
       .then((permissionState) => {
+        console.log(permissionState);
         if (permissionState === "granted") {
           window.addEventListener("devicemotion", (event) => {
             // Handle device motion event
@@ -141,11 +143,10 @@ export const App = () => {
   // };
 
   useEffect(() => {
-    requestDeviceMotionPermission();
-    requestDeviceOrientationPermission();
     async function initCameraKit() {
       // Init CameraKit
-
+      requestDeviceMotionPermission();
+      requestDeviceOrientationPermission();
       const cameraKit = await bootstrapCameraKit({
         logger: "console",
         apiToken:
