@@ -104,8 +104,8 @@ export const App = () => {
   useEffect(() => {
     async function initCameraKit() {
       // Init CameraKit
-      requestDeviceMotionPermission();
-      requestDeviceOrientationPermission();
+      // requestDeviceMotionPermission();
+      // requestDeviceOrientationPermission();
       const cameraKit = await bootstrapCameraKit({
         logger: "console",
         apiToken:
