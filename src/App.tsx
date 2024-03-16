@@ -201,7 +201,13 @@ export const App = () => {
     <div style={{ width: "100%", height: "100%" }}>
       <canvas
         ref={canvasRef}
-        style={{ width: "100%", height: "100%" }}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+        }}
       />
 
       {/* <button
