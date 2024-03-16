@@ -14,41 +14,21 @@ import { Push2Web } from "@snap/push2web";
 
 import "./App.css";
 
-const LENS_GROUP_ID = "542c15e5-1f57-450b-b0c6-f3f29df229aa";
-
-const apiService: RemoteApiService = {
-  apiSpecId: "af9a7f93-3a8d-4cf4-85d2-4dcdb8789b3d",
-  getRequestHandler(request) {
-    console.log("Request", request);
-
-    return (reply) => {
-      fetch("https://catfact.ninja/fact", {
-        headers: {
-          Accept: "application/json",
-        },
-      })
-        .then((res) => res.text())
-        .then((res) =>
-          reply({
-            status: "success",
-            metadata: {},
-            body: new TextEncoder().encode(res),
-          })
-        );
-    };
-  },
-};
+const LENS_GROUP_ID = "f73e0162-1b55-4344-a050-4dfa2b54af43";
 
 export const App = () => {
   const cameraKitRef = useRef<CameraKit>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sessionRef = useRef<CameraKitSession>();
   const push2WebRef = useRef<Push2Web>();
+  const mediaRecorderRef = useRef<MediaRecorder>();
+  const downLoardUrlRef = useRef<string>();
 
   const mediaStreamRef = useRef<MediaStream>();
 
   const [isBackFacing, setIsBackFacing] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
 
   const updateCamera = async () => {
     const isNowBackFacing = !isBackFacing;
@@ -74,26 +54,56 @@ export const App = () => {
     sessionRef.current?.play();
   };
 
+  const recordBtnClick = async () => {
+    console.log("recordBtnClick");
+    if (!isRecording) {
+      console.log("start recording");
+      setIsRecording(true);
+      if (!canvasRef.current) return;
+      console.log("creating stream");
+      const stream: MediaStream = canvasRef.current?.captureStream(30);
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      mediaRecorderRef.current.addEventListener("dataavailable", (event) => {
+        if (!event.data.size) {
+          console.warn("No recorded data available");
+          return;
+        }
+
+        const blob = new Blob([event.data]);
+
+        downLoardUrlRef.current = window.URL.createObjectURL(blob);
+        console.log(downLoardUrlRef.current);
+
+        downLoardUrlRef.current;
+      });
+
+      mediaRecorderRef.current.start();
+    } else if (isRecording) {
+      console.log("stop recording");
+      mediaRecorderRef.current?.stop();
+      const link = document.createElement("a");
+      link.setAttribute("style", "display: none");
+
+      if (!downLoardUrlRef.current) return;
+      console.log(downLoardUrlRef.current);
+
+      link.href = downLoardUrlRef.current;
+      link.download = "video.webm";
+      link.click();
+      link.remove();
+      setIsRecording(false);
+    }
+  };
+
   useEffect(() => {
     async function initCameraKit() {
-      // Init PUSH2WEB
-      const push2Web = new Push2Web();
-      push2WebRef.current = push2Web;
       // Init CameraKit
-      //@ts-ignore
-      const apiServiceInjectable = Injectable(
-        remoteApiServicesFactory.token,
-        [remoteApiServicesFactory.token] as const,
-        (existing: RemoteApiServices) => [...existing, apiService]
-      );
-      const cameraKit = await bootstrapCameraKit(
-        {
-          logger: "console",
-          apiToken:
-            "eyJhbGciOiJIUzI1NiIsImtpZCI6IkNhbnZhc1MyU0hNQUNQcm9kIiwidHlwIjoiSldUIn0.eyJhdWQiOiJjYW52YXMtY2FudmFzYXBpIiwiaXNzIjoiY2FudmFzLXMyc3Rva2VuIiwibmJmIjoxNzA4NTQ0MTU3LCJzdWIiOiI3YjQwZWM4Ny1hNTk3LTQ0OTMtYjAyZi04YTFkOWVlYTNjZTN-U1RBR0lOR340ZGE0ZmUwYi05OTNmLTRkOGYtYjNiNC0yNjg3NjM2NjkxMzgifQ.BfK9vetSFkfUkL5_ueLB7xJv3S60SRfwIuISh_5F0V8",
-        },
-        (container) => container.provides(apiServiceInjectable)
-      );
+
+      const cameraKit = await bootstrapCameraKit({
+        logger: "console",
+        apiToken:
+          "eyJhbGciOiJIUzI1NiIsImtpZCI6IkNhbnZhc1MyU0hNQUNQcm9kIiwidHlwIjoiSldUIn0.eyJhdWQiOiJjYW52YXMtY2FudmFzYXBpIiwiaXNzIjoiY2FudmFzLXMyc3Rva2VuIiwibmJmIjoxNzA4NTQ0MTU3LCJzdWIiOiI3YjQwZWM4Ny1hNTk3LTQ0OTMtYjAyZi04YTFkOWVlYTNjZTN-U1RBR0lOR340ZGE0ZmUwYi05OTNmLTRkOGYtYjNiNC0yNjg3NjM2NjkxMzgifQ.BfK9vetSFkfUkL5_ueLB7xJv3S60SRfwIuISh_5F0V8",
+      });
       cameraKitRef.current = cameraKit;
 
       const { lenses } = await cameraKit.lensRepository.loadLensGroups([
@@ -111,7 +121,11 @@ export const App = () => {
         console.error(event.detail)
       );
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: isBackFacing ? "environment" : "user" },
+        video: {
+          facingMode: isBackFacing ? "environment" : "user",
+          width: window.innerWidth * window.devicePixelRatio,
+          height: window.innerHeight * window.devicePixelRatio,
+        },
       });
 
       mediaStreamRef.current = mediaStream;
@@ -121,28 +135,6 @@ export const App = () => {
       });
       await session.setSource(source);
       await session.applyLens(lenses[0]);
-
-      //Config Push2Web
-      window.addEventListener("loginkit_token", (event: Event) => {
-        const tokenEvent = event as CustomEvent<string>;
-        const token = tokenEvent.detail;
-
-        console.log("token recieved", token);
-
-        push2Web.subscribe(token, session, cameraKit.lensRepository);
-        push2Web.events.addEventListener("error", (event) => {
-          console.error(event.detail);
-        });
-        push2Web.events.addEventListener("lensReceived", async (event) => {
-          const { id } = event.detail;
-
-          const newLens = await cameraKit.lensRepository.loadLens(
-            id,
-            LENS_GROUP_ID
-          );
-          await session.applyLens(newLens);
-        });
-      });
 
       session.play();
       setIsInitialized(true);
@@ -159,16 +151,14 @@ export const App = () => {
 
   return (
     <div style={{ width: "100%", height: "100%" }}>
-      <button
-        onClick={updateCamera}
-        style={{ position: "absolute", top: "2rem", right: "2rem" }}
-      >
-        {isBackFacing ? "switch to front" : "switch to back"}
-      </button>
-
       <canvas
         ref={canvasRef}
         style={{ width: "100%", height: "100%" }}
+      />
+
+      <button
+        className="record-button"
+        onClick={recordBtnClick}
       />
     </div>
   );

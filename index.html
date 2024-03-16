@@ -11,56 +11,14 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
-    <title>Vite + React</title>
+    <title>Columbian Mammoth</title>
   </head>
   <body>
     <div id="root"></div>
-    <button id="login-btn"></button>
     <script
       defer
       type="module"
       src="/src/main.tsx"
     ></script>
-    <script defer>
-      window.snapKitInit = function () {
-        var loginButtonIconId = "login-btn";
-        // Mount Login Button
-        snap.loginkit.mountButton(loginButtonIconId, {
-          clientId: "be39b419-c314-4879-906a-7b4b8284f8c0",
-          redirectURI: "http://localhost:5173",
-          scopeList: [
-            "user.display_name",
-            "user.bitmoji.avatar",
-            "user.external_id",
-          ],
-          handleResponseCallback: function (response) {
-            const { access_token } = response;
-            const tokenEvent = new CustomEvent("loginkit_token", {
-              detail: access_token,
-            });
-            window.dispatchEvent(tokenEvent);
-            snap.loginkit.fetchUserInfo().then(
-              function (result) {
-                console.log(result);
-              },
-              function (err) {
-                console.log(err); // Error
-              }
-            );
-          },
-        });
-      };
-
-      // Load the SDK asynchronously
-      (function (d, s, id) {
-        var js,
-          sjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s);
-        js.id = id;
-        js.src = "https://sdk.snapkit.com/js/v1/login.js";
-        sjs.parentNode.insertBefore(js, sjs);
-      })(document, "script", "loginkit-sdk");
-    </script>
   </body>
 </html>

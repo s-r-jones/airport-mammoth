@@ -46,3 +46,50 @@
   bottom: 1rem;
   left: 25%;
 }
+
+.record-button {
+  background-color: #ff0000; /* Red background */
+  border: none;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+
+  font-size: 16px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  cursor: pointer;
+
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+
+  /* Optional: Adds a shadow to give the button a "lifted" effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+  /* Center the text vertically */
+  line-height: 60px; /* Same as button's height */
+
+  /* Transition for a smooth effect on hover */
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.record-button:hover {
+  /* Darker shade of red on hover */
+  background-color: #e60000;
+
+  /* Slightly enlarge the button when hovered for a tactile feel */
+  transform: scale(1.1);
+}
+
+.record-button:active {
+  /* Even darker shade of red when the button is clicked */
+  background-color: #cc0000;
+
+  /* Slightly "press" the button down on click */
+  transform: scale(0.9);
+}
