@@ -101,47 +101,6 @@ export const App = () => {
     sessionRef.current?.play();
   };
 
-  // const recordBtnClick = async () => {
-  //   console.log("recordBtnClick");
-  //   if (!isRecording) {
-  //     console.log("start recording");
-  //     setIsRecording(true);
-  //     if (!canvasRef.current) return;
-  //     console.log("creating stream");
-  //     const stream: MediaStream = canvasRef.current?.captureStream(30);
-  //     mediaRecorderRef.current = new MediaRecorder(stream);
-  //     mediaRecorderRef.current.addEventListener("dataavailable", (event) => {
-  //       if (!event.data.size) {
-  //         console.warn("No recorded data available");
-  //         return;
-  //       }
-
-  //       const blob = new Blob([event.data]);
-
-  //       downLoardUrlRef.current = window.URL.createObjectURL(blob);
-  //       console.log(downLoardUrlRef.current);
-
-  //       downLoardUrlRef.current;
-  //     });
-
-  //     mediaRecorderRef.current.start();
-  //   } else if (isRecording) {
-  //     console.log("stop recording");
-  //     mediaRecorderRef.current?.stop();
-  //     const link = document.createElement("a");
-  //     link.setAttribute("style", "display: none");
-
-  //     if (!downLoardUrlRef.current) return;
-  //     console.log(downLoardUrlRef.current);
-
-  //     link.href = downLoardUrlRef.current;
-  //     link.download = "video.webm";
-  //     link.click();
-  //     link.remove();
-  //     setIsRecording(false);
-  //   }
-  // };
-
   useEffect(() => {
     async function initCameraKit() {
       // Init CameraKit
@@ -168,11 +127,18 @@ export const App = () => {
       session.events.addEventListener("error", (event) =>
         console.error(event.detail)
       );
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const backCamera = devices.find(
+        (device) =>
+          device.kind === "videoinput" &&
+          device.label === "Back Ultra Wide Camera" // Get the wider camera on iPhone / TODO test on Android
+      );
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
           facingMode: isBackFacing ? "environment" : "user",
           width: window.innerWidth * window.devicePixelRatio,
           height: window.innerHeight * window.devicePixelRatio,
+          deviceId: backCamera ? { exact: backCamera?.deviceId } : undefined,
         },
       });
 
@@ -201,19 +167,8 @@ export const App = () => {
     <div style={{ width: "100%", height: "100%" }}>
       <canvas
         ref={canvasRef}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100vw",
-          height: "100vh",
-        }}
+        style={{ height: "100%", width: " 100%" }}
       />
-
-      {/* <button
-        className="record-button"
-        onClick={recordBtnClick}
-      /> */}
     </div>
   );
 };
