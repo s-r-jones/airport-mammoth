@@ -138,7 +138,7 @@ export const App = () => {
           facingMode: isBackFacing ? "environment" : "user",
           width: window.innerWidth * window.devicePixelRatio,
           height: window.innerHeight * window.devicePixelRatio,
-          deviceId: backCamera ? { exact: backCamera?.deviceId } : undefined,
+          // deviceId: backCamera ? { exact: backCamera?.deviceId } : undefined,
         },
       });
 
