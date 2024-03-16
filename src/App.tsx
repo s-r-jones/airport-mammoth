@@ -14,7 +14,7 @@ import { Push2Web } from "@snap/push2web";
 
 import "./App.css";
 
-const LENS_GROUP_ID = "f73e0162-1b55-4344-a050-4dfa2b54af43";
+const LENS_GROUP_ID = "006982dd-596f-4cee-8ea4-0efd2078f2d3";
 
 export const App = () => {
   const cameraKitRef = useRef<CameraKit>();
@@ -54,46 +54,46 @@ export const App = () => {
     sessionRef.current?.play();
   };
 
-  const recordBtnClick = async () => {
-    console.log("recordBtnClick");
-    if (!isRecording) {
-      console.log("start recording");
-      setIsRecording(true);
-      if (!canvasRef.current) return;
-      console.log("creating stream");
-      const stream: MediaStream = canvasRef.current?.captureStream(30);
-      mediaRecorderRef.current = new MediaRecorder(stream);
-      mediaRecorderRef.current.addEventListener("dataavailable", (event) => {
-        if (!event.data.size) {
-          console.warn("No recorded data available");
-          return;
-        }
+  // const recordBtnClick = async () => {
+  //   console.log("recordBtnClick");
+  //   if (!isRecording) {
+  //     console.log("start recording");
+  //     setIsRecording(true);
+  //     if (!canvasRef.current) return;
+  //     console.log("creating stream");
+  //     const stream: MediaStream = canvasRef.current?.captureStream(30);
+  //     mediaRecorderRef.current = new MediaRecorder(stream);
+  //     mediaRecorderRef.current.addEventListener("dataavailable", (event) => {
+  //       if (!event.data.size) {
+  //         console.warn("No recorded data available");
+  //         return;
+  //       }
 
-        const blob = new Blob([event.data]);
+  //       const blob = new Blob([event.data]);
 
-        downLoardUrlRef.current = window.URL.createObjectURL(blob);
-        console.log(downLoardUrlRef.current);
+  //       downLoardUrlRef.current = window.URL.createObjectURL(blob);
+  //       console.log(downLoardUrlRef.current);
 
-        downLoardUrlRef.current;
-      });
+  //       downLoardUrlRef.current;
+  //     });
 
-      mediaRecorderRef.current.start();
-    } else if (isRecording) {
-      console.log("stop recording");
-      mediaRecorderRef.current?.stop();
-      const link = document.createElement("a");
-      link.setAttribute("style", "display: none");
+  //     mediaRecorderRef.current.start();
+  //   } else if (isRecording) {
+  //     console.log("stop recording");
+  //     mediaRecorderRef.current?.stop();
+  //     const link = document.createElement("a");
+  //     link.setAttribute("style", "display: none");
 
-      if (!downLoardUrlRef.current) return;
-      console.log(downLoardUrlRef.current);
+  //     if (!downLoardUrlRef.current) return;
+  //     console.log(downLoardUrlRef.current);
 
-      link.href = downLoardUrlRef.current;
-      link.download = "video.webm";
-      link.click();
-      link.remove();
-      setIsRecording(false);
-    }
-  };
+  //     link.href = downLoardUrlRef.current;
+  //     link.download = "video.webm";
+  //     link.click();
+  //     link.remove();
+  //     setIsRecording(false);
+  //   }
+  // };
 
   useEffect(() => {
     async function initCameraKit() {
@@ -110,7 +110,7 @@ export const App = () => {
         LENS_GROUP_ID,
       ]);
 
-      //console.log(lenses);
+      console.log(lenses);
 
       // Init Session
       const session = await cameraKit.createSession({
@@ -156,10 +156,10 @@ export const App = () => {
         style={{ width: "100%", height: "100%" }}
       />
 
-      <button
+      {/* <button
         className="record-button"
         onClick={recordBtnClick}
-      />
+      /> */}
     </div>
   );
 };
