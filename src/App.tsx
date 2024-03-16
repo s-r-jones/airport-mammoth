@@ -164,7 +164,7 @@ export const App = () => {
   }, []);
 
   return (
-    <div style={{ height: "100%", width: "95%" }}>
+    <div style={{ height: "95%", width: "100%" }}>
       <canvas
         ref={canvasRef}
         style={{ height: "100%", width: "100%" }}
