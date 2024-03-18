@@ -14,54 +14,7 @@ import { Push2Web } from "@snap/push2web";
 
 import "./App.css";
 
-function requestDeviceMotionPermission() {
-  console.log("requestDeviceMotionPermission");
-  //@ts-ignore
-  if (typeof DeviceMotionEvent.requestPermission === "function") {
-    //@ts-ignore
-    DeviceMotionEvent.requestPermission()
-      //@ts-ignore
-      .then((permissionState) => {
-        console.log(permissionState);
-        if (permissionState === "granted") {
-          window.addEventListener("devicemotion", (event) => {
-            // Handle device motion event
-          });
-        }
-      })
-      .catch(console.error);
-  } else {
-    // Handle regular non iOS 13+ devices
-    window.addEventListener("devicemotion", (event) => {
-      // Handle device motion event
-    });
-  }
-}
-
-//@ts-ignore
-function requestDeviceOrientationPermission() {
-  //@ts-ignore
-  if (typeof DeviceOrientationEvent.requestPermission === "function") {
-    //@ts-ignore
-    DeviceOrientationEvent.requestPermission()
-      //@ts-ignore
-      .then((permissionState) => {
-        if (permissionState === "granted") {
-          window.addEventListener("deviceorientation", (event) => {
-            // Handle device orientation event
-          });
-        }
-      })
-      .catch(console.error);
-  } else {
-    // Handle regular non iOS 13+ devices
-    window.addEventListener("deviceorientation", (event) => {
-      // Handle device orientation event
-    });
-  }
-}
-
-const LENS_GROUP_ID = "006982dd-596f-4cee-8ea4-0efd2078f2d3";
+const LENS_GROUP_ID = "f73e0162-1b55-4344-a050-4dfa2b54af43";
 
 export const App = () => {
   const cameraKitRef = useRef<CameraKit>();
