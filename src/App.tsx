@@ -100,7 +100,7 @@ export const App = () => {
       const source = createMediaStreamSource(mediaStream, {
         cameraType: "environment",
       });
-      await session.setSource(source);
+      await session.setSource(source); //ok
       await session.applyLens(lenses[0]);
 
       session.play();
