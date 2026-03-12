@@ -46,7 +46,7 @@ export const App = () => {
     mediaStreamRef.current = mediaStream;
 
     const source = createMediaStreamSource(mediaStream, {
-      cameraType: isNowBackFacing ? "back" : "front",
+      cameraType: isNowBackFacing ? "environment" : "user",
     });
 
     await sessionRef.current?.setSource(source);
@@ -98,7 +98,7 @@ export const App = () => {
       mediaStreamRef.current = mediaStream;
 
       const source = createMediaStreamSource(mediaStream, {
-        cameraType: "back",
+        cameraType: "environment",
       });
       await session.setSource(source);
       await session.applyLens(lenses[0]);
